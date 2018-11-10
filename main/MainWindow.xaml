@@ -1,0 +1,94 @@
+﻿<Window x:Class="CryptoCore.Core.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CryptoCore"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        xmlns:UserControls="clr-namespace:CryptoCore.User_Controls"
+        Title="CryptoCore" Height="550" Width="800">
+    <Grid>
+        <materialDesign:DialogHost Identifier="RootDialog">
+            <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}">
+                <materialDesign:DrawerHost.LeftDrawerContent>
+
+                    <Grid Width="500" Background="White">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="7*"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <ToggleButton Grid.Column="1" Style="{StaticResource MaterialDesignHamburgerToggleButton}"
+                                    HorizontalAlignment="Right" Margin="0 0 16 450"
+                                    IsChecked="{Binding ElementName=MenuToggleButton, Path=IsChecked, Mode=TwoWay}" />
+
+                        <ItemsControl ItemsSource="{Binding ApplicationPages}">
+
+                            <ItemsControl.ItemTemplate>
+
+                                <DataTemplate>
+
+                                    <Button Style="{StaticResource MaterialDesignFlatButton}" Height="100"
+                                            Command="{Binding DataContext.ChangeAppPageCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"
+                                            >
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <materialDesign:PackIcon Width="40" Height="40" Kind="{Binding IconName}"/>
+
+                                            <TextBlock Margin="20 0 0 0" Grid.Column="1" Text="{Binding ApplicationPageName}"  FontSize="24"/>
+
+                                        </Grid>
+                                    </Button>
+
+                                </DataTemplate>
+
+                            </ItemsControl.ItemTemplate>
+
+
+
+                        </ItemsControl>
+                    </Grid>
+
+
+
+                </materialDesign:DrawerHost.LeftDrawerContent>
+
+                <DockPanel>
+
+                    <materialDesign:ColorZone Padding="16" materialDesign:ShadowAssist.ShadowDepth="Depth2"
+                                            Mode="PrimaryMid" DockPanel.Dock="Top">
+                        <DockPanel>
+                            <ToggleButton Style="{StaticResource MaterialDesignHamburgerToggleButton}" IsChecked="False"
+                                        x:Name="MenuToggleButton"/>
+
+                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="30">CryptoCore</TextBlock>
+                        </DockPanel>
+                    </materialDesign:ColorZone>
+
+                    <materialDesign:Transitioner SelectedIndex="{Binding CurrentApplicationPage}">
+
+                        <UserControls:WelcomeUC/>
+
+                        <UserControls:SimpleCiphersUC/>
+
+                        <UserControls:StreamCiphersUC/>
+
+                        <UserControls:CryptoSystemsUC/>
+
+                        <UserControls:DigitalSignatureUC/>
+
+                    </materialDesign:Transitioner>
+
+                </DockPanel>
+
+            </materialDesign:DrawerHost>
+
+        </materialDesign:DialogHost>
+
+    </Grid>
+</Window>
