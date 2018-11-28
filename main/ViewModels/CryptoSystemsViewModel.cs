@@ -101,7 +101,7 @@ namespace CryptoCore.Core
         /// </summary>
         private readonly int defaultKeyLength = 128;
 
-        private readonly int russianMaxUnicodeIndx = 2100;
+        private readonly int russianMaxUnicodeIndx = 1100;
 
         #endregion
 
@@ -248,8 +248,8 @@ namespace CryptoCore.Core
                         {
                             #region Key generation
 
-                            p = PrimeNumsGenerator.GeneratePrime(defaultKeyLength);
-                            q = PrimeNumsGenerator.GeneratePrime(defaultKeyLength);
+                            p = RandomNumbersGenerator.GenerateBlumPrime(defaultKeyLength);
+                            q = RandomNumbersGenerator.GenerateBlumPrime(defaultKeyLength);
 
                             if (p < 0) { p = -p; }
                             if (q < 0) { q = -q; }
@@ -436,6 +436,13 @@ namespace CryptoCore.Core
                             if ((IsUnicodeSupported) && (publicKey < russianMaxUnicodeIndx))
                             {
                                 StateText = $"To support unicode symbols, provide a public key larger than {russianMaxUnicodeIndx}";
+                                IsCompleted = false;
+                                return;
+                            }
+
+                            if(publicKey < Math.Pow(2,8))
+                            {
+                                StateText = $"Public key should be more than 1 byte";
                                 IsCompleted = false;
                                 return;
                             }

@@ -77,6 +77,7 @@ namespace CryptoCore.Core
             try
             {
 
+                #region Checks
 
                 //Check whether file id is int
 
@@ -130,6 +131,8 @@ namespace CryptoCore.Core
                     return;
                 }
 
+                #endregion
+
                 var AlphabetInCiphers = string.Empty;
 
                 //Get chosen Alphabet
@@ -152,23 +155,9 @@ namespace CryptoCore.Core
                     }
                 }
 
-                var AlgoFactory = new SimpleCipheringAlgorithmFactory();
+                var Algorithm = new SimpleCipheringAlgorithmFactory().NewAlgorithm(ChosenCipherType);
 
-
-                var Algorithm = AlgoFactory.NewAlgorithm(ChosenCipherType);
-
-                //Get error message
-
-                var result = Algorithm.Initialize(KeyValue, AlphabetInCiphers);
-
-                //if the error was present
-
-                if (!string.IsNullOrEmpty(result))
-                {
-                    IsCompleted = false;
-                    StateText = result;
-                    return;
-                }
+                Algorithm.Initialize(KeyValue, AlphabetInCiphers);
 
                 var chosenActionType = new Operations();
 
@@ -184,7 +173,6 @@ namespace CryptoCore.Core
 
                 TextToWorkWith = GetFixedString(ref TextToWorkWith, AlphabetInCiphers, chosenActionType);
 
-                //ready to work with no errors
                 //Encrypt
                 if (chosenActionType == Operations.Encrypt)
                 {
@@ -202,11 +190,21 @@ namespace CryptoCore.Core
                 IsCompleted = true;
 
             }
+            catch(ArgumentException ex)
+            {
+                StateText = ex.Message;
+                IsCompleted = false;
+            }
 
             finally
             { IsNoActionRunning = true; }
 
         }
+
+        #endregion
+
+        #region Helper methods
+
 
         private void ChooseFile(Object ChosenFile)
         {
@@ -251,10 +249,6 @@ namespace CryptoCore.Core
             }
 
         }
-        #endregion
-
-        #region Helper methods
-
 
         /// <summary>
         /// Method for fixing a string to proceed to encrypt/decrypt operations(remove unneccessary symbols)
@@ -327,7 +321,6 @@ namespace CryptoCore.Core
                 FileFixedName = "Not loaded...",
                 IsLoaded = false
             });
-
         }
 
         #endregion

@@ -57,6 +57,10 @@ namespace CryptoCore.Core
         /// </summary>
         public string ChosenFileId { get; set; }
 
+        /// <summary>
+        /// UI string showing generated key if user 
+        /// </summary>
+        public string GeneratedKey { get; set; }
 
         /// <summary>
         /// Amount of chars in file name to display
@@ -74,6 +78,12 @@ namespace CryptoCore.Core
 
         #endregion
 
+        #region Flags
+
+        public bool IsAutoGeneratingKeys { get; set; }
+
+        #endregion
+
         #region Main methods
 
         private async void WorkAsync()
@@ -81,9 +91,7 @@ namespace CryptoCore.Core
             IsNoActionRunning = false;
 
             try
-            {
-
-
+            { 
                 #region Checks
 
                 //Check whether file id is int
@@ -146,16 +154,13 @@ namespace CryptoCore.Core
 
                 cipher.Initialize(keyGeneratorInstance);
 
-                var result = await cipher.Encrypt(FilePath, InitialState, progress);
-
-                if(!result)
+                if(IsAutoGeneratingKeys)
                 {
-                    StateText = "Check length of initial state and try again.";
-
-                    IsCompleted = false;
-
-                    return;
+                    var generatedKey = RandomNumbersGenerator.GenerateBinaryString(LFSR.DefaultHighestPower);
+                    GeneratedKey = $"Your generated key is : {generatedKey}";
+                    await cipher.Encrypt(FilePath, generatedKey, progress);
                 }
+                else { await cipher.Encrypt(FilePath, InitialState, progress); }
                              
 
                 StateText = "Action completed.";
@@ -163,7 +168,12 @@ namespace CryptoCore.Core
                 IsCompleted = true;
 
             }
-            catch(Exception ex)
+            catch(ArgumentException ex)
+            {
+                StateText = ex.Message;
+                IsCompleted = false;
+            }
+            catch(OutOfMemoryException ex)
             {
                 StateText = ex.Message;
                 IsCompleted = false;

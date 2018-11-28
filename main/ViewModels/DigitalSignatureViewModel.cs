@@ -8,6 +8,11 @@ using System.Windows.Input;
 using CryptoCore.Data;
 using CiphersLibrary.Algorithms;
 using System.Threading.Tasks;
+using CiphersLibrary.Data;
+using System.Numerics;
+using System.Collections.Generic;
+using CiphersLibrary.Core;
+using System.Security.Cryptography;
 
 namespace CryptoCore.Core
 {
@@ -32,9 +37,9 @@ namespace CryptoCore.Core
 
         public static string[] ActionsList => new string[] { "Sign a message", "Signature check" };
          
-        public static string[] SignatureTypeList => new string[] { "RSA", "Sha256"};
+        public static string[] SignatureTypeList => new string[] { "RSA default", "RSA SHA-1"};
 
-        public string ChosenSignature { get; set; } = "RSA";
+        public string ChosenSignature { get; set; } = "RSA default";
          
         public string ChosenAction { get; set; } = "Sign a message";
 
@@ -56,12 +61,16 @@ namespace CryptoCore.Core
         public string PublicKeyParam2 { get; set; }
 
         public string SecretKey { get; set; }
+        
+        private Dictionary<string, HashFunction> HashFunctionsDict { get; set; }
 
         #endregion
 
         #region Flags
 
         public bool IsKeysAutoGenerating { get; set; }
+
+        public bool IsCorrectnessChecksEnabled { get; set; }
 
         #endregion
 
@@ -100,7 +109,7 @@ namespace CryptoCore.Core
 
             try
             {
-                #region Checks
+                #region Checks for chosen file
 
                 //Check whether file id is int
 
@@ -162,116 +171,70 @@ namespace CryptoCore.Core
                 }
 
                 #endregion
-               
-                if(ChosenSignature == "RSA")
+
+                var hashFuncChosen = HashFunctionsDict[ChosenSignature];
+
+                BigInteger p = 0, q = 0, secretKey = 0;
+
+                if(!IsKeysAutoGenerating)
                 {
+                    #region Checks for user input
 
-                    if(ChosenAction == "Sign a message")
+                    if (!BigInteger.TryParse(PublicKeyParam1, out p))
                     {
-                        if(!int.TryParse(PublicKeyParam1, out var p))
-                        {
-                            IsCompleted = false;
-                            StateText = "Wrong p value";
-                            return;
-                        }
-                       
-
-                        if (!int.TryParse(PublicKeyParam2, out var q))
-                        {
-                            IsCompleted = false;
-                            StateText = "Wrong q value";
-                            return;
-                        }
-
-                        if (!int.TryParse(SecretKey, out var secretKey))
-                        {
-                            IsCompleted = false;
-                            StateText = "Wrong secret key value";
-                            return;
-                        }
-
-                        if(p * q > int.MaxValue)
-                        {
-                            IsCompleted = false;
-                            StateText = "p * q should be int value.";
-                            return;
-                        }
-
-                        var signatureInstance = new RsaSignature(p, q, secretKey);
-                         
-                        OutputText = signatureInstance.Sign(FilePath).ToString();
-
+                        IsCompleted = false;
+                        StateText = "Wrong p value";
+                        return;
                     }
+
+
+                    if (!BigInteger.TryParse(PublicKeyParam2, out q))
+                    {
+                        IsCompleted = false;
+                        StateText = "Wrong q value";
+                        return;
+                    }
+
+                    if (!BigInteger.TryParse(SecretKey, out secretKey))
+                    {
+                        IsCompleted = false;
+                        StateText = "Wrong secret key value";
+                        return;
+                    }
+
+                    #endregion
+                }
+                else
+                { //if secret key couldn't meet the requerements here, should regenerate the numbers.
+                    p = RandomNumbersGenerator.GeneratePrime(15 * 8);
+                    OutputText += $"P : {p.ToString()} "; 
+                    q = RandomNumbersGenerator.GeneratePrime(15 * 8);
+                    OutputText += Environment.NewLine + $"Q : {q.ToString()} ";
+                    secretKey = RandomNumbersGenerator.GeneratePrime(15 * 8);
+                    OutputText += Environment.NewLine + $"Secret Key : {secretKey.ToString()} ";
+                }
+
+
+                var signatureInstance = new RsaSignature(p, q, secretKey, hashFuncChosen, IsCorrectnessChecksEnabled);
+
+                if (ChosenAction == "Sign a message")
+                {
+                    OutputText += Environment.NewLine + $"Result Is: {signatureInstance.Sign(FilePath).ToString()}";
+                }                 
                     
-                    if(ChosenAction == "Signature check")
-                    {
-                        if (!int.TryParse(PublicKeyParam1, out var p))
-                        {
-                            IsCompleted = false;
-                            StateText = "Wrong p value";
-                            return;
-                        }
-
-
-                        if (!int.TryParse(PublicKeyParam2, out var q))
-                        {
-                            IsCompleted = false;
-                            StateText = "Wrong q value";
-                            return;
-                        }
-
-                        if (!int.TryParse(SecretKey, out var secretKey))
-                        {
-                            IsCompleted = false;
-                            StateText = "Wrong secret key value";
-                            return;
-                        }
-
-                        if (p * q > int.MaxValue)
-                        {
-                            IsCompleted = false;
-                            StateText = "p * q should be int value.";
-                            return;
-                        }
-
-                        var signatureInstance = new RsaSignature(p, q, secretKey);
-                       
-                        if (signatureInstance.CheckSignature(FilePath))
-                        {
-                            OutputText = "Digital signature is right!";
-                        }
-                        else
-                        {
-                            OutputText = "Digital signature is corrupted!";
-                        }
-
-                    }
-
-                }
-
-                if(ChosenSignature == "Sha256")
+                if(ChosenAction == "Signature check")
                 {
-                    if (ChosenAction == "Sign a message")
+                                            
+                    if (signatureInstance.CheckSignature(FilePath))
                     {
-                        var signatureInstance = new Sha256Signature();
-
-                        signatureInstance.Sign(FilePath);
+                        OutputText = "Digital signature is right!";
+                    }
+                    else
+                    {
+                        OutputText = "Digital signature is corrupted!";
                     }
 
-                    if (ChosenAction == "Signature check")
-                    {
-                        var signatureInstance = new Sha256Signature();
-
-                        if (signatureInstance.CheckSignature(FilePath))
-                        {
-                            OutputText = "Digital signature is right!";
-                        }
-                        else
-                        {
-                            OutputText = "Digital signature is corrupted!";
-                        }
-                    }
-                }
+                }             
 
                 StateText = "Action completed.";
 
@@ -378,6 +341,12 @@ namespace CryptoCore.Core
                     FileFixedName = "Not loaded...",
                     IsLoaded = false
                 }
+            };
+
+            HashFunctionsDict = new Dictionary<string, HashFunction>
+            {
+                { "RSA default", HashFunction.YarmolikHash },
+                { "RSA SHA-1", HashFunction.Sha1 }
             };
 
         }

@@ -79,19 +79,19 @@
     <Compile Include="Data\ResourceStrings.cs" />
     <Compile Include="Extension Methods\String Extensions.cs" />
     <Compile Include="Helpers\RelayCommand.cs" />
-    <Compile Include="User Controls\DigitalSignatureUC.xaml.cs">
+    <Compile Include="Views\DigitalSignatureUC.xaml.cs">
       <DependentUpon>DigitalSignatureUC.xaml</DependentUpon>
     </Compile>
-    <Compile Include="User Controls\StreamCiphersUC.xaml.cs">
+    <Compile Include="Views\StreamCiphersUC.xaml.cs">
       <DependentUpon>StreamCiphersUC.xaml</DependentUpon>
     </Compile>
-    <Compile Include="User Controls\CryptoSystemsUC.xaml.cs">
+    <Compile Include="Views\CryptoSystemsUC.xaml.cs">
       <DependentUpon>CryptoSystemsUC.xaml</DependentUpon>
     </Compile>
-    <Compile Include="User Controls\SimpleCiphersUC.xaml.cs">
+    <Compile Include="Views\SimpleCiphersUC.xaml.cs">
       <DependentUpon>SimpleCiphersUC.xaml</DependentUpon>
     </Compile>
-    <Compile Include="User Controls\WelcomeUC.xaml.cs">
+    <Compile Include="Views\WelcomeUC.xaml.cs">
       <DependentUpon>WelcomeUC.xaml</DependentUpon>
     </Compile>
     <Compile Include="Value Converters\BaseValueConverter.cs" />
@@ -114,23 +114,23 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="User Controls\DigitalSignatureUC.xaml">
+    <Page Include="Views\DigitalSignatureUC.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="User Controls\StreamCiphersUC.xaml">
+    <Page Include="Views\StreamCiphersUC.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="User Controls\CryptoSystemsUC.xaml">
+    <Page Include="Views\CryptoSystemsUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="User Controls\SimpleCiphersUC.xaml">
+    <Page Include="Views\SimpleCiphersUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="User Controls\WelcomeUC.xaml">
+    <Page Include="Views\WelcomeUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -172,7 +172,7 @@
     <Resource Include="logo.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Library\CiphersLibrary.csproj">
+    <ProjectReference Include="..\..\..\CiphersLibrary\CiphersLibrary.csproj">
       <Project>{69c4dcfe-1211-4ef0-843f-8a7bd72c608e}</Project>
       <Name>CiphersLibrary</Name>
     </ProjectReference>

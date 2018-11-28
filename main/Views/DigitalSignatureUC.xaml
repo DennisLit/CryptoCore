@@ -221,19 +221,39 @@
 
 
                         </Grid>
-                        
 
-                        <TextBox 
-                    materialDesign:HintAssist.Hint="File №"
-                    Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Center" 
-                    Width="150"
-                    Text="{Binding ChosenFileId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    Grid.Row="4"
-                    Foreground="Black"
-                    FontSize="16"
-                    FontFamily="Product Sans"/>
+                        <Grid Grid.Row="4">
+                            
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="0.7*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox 
+                            materialDesign:HintAssist.Hint="File №"
+                            Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                            VerticalAlignment="Center"
+                            Grid.Column="1"
+                                Width="60"
+                            HorizontalAlignment="Center" 
+                            Text="{Binding ChosenFileId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Foreground="Black"
+                            FontSize="14"
+                            FontFamily="Product Sans"/>
+
+                            <ComboBox 
+                             materialDesign:HintAssist.Hint="Action"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center" 
+                            Width="115"
+                            Foreground="Black"
+                            FontSize="14"
+                            FontFamily="Product Sans"
+                            ItemsSource="{Binding ActionsList}" 
+                            SelectedValue="{Binding ChosenAction, Mode=TwoWay}"
+                            />
+                            
+                        </Grid>
 
                         <Grid Grid.Row="2">
 
@@ -272,19 +292,22 @@
                               ToolTip="MaterialDesignActionAccentToggleButton" />
                         </Grid>
 
+                        <Grid Grid.Row="5">
+                                                      
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
 
-                        <ComboBox 
-                             materialDesign:HintAssist.Hint="Action"
-                            VerticalAlignment="Center"
-                            Grid.Row="5"
-                            HorizontalAlignment="Center" 
-                            Width="130"
-                            Foreground="Black"
-                            FontSize="16"
-                            FontFamily="Product Sans"
-                            ItemsSource="{Binding ActionsList}" 
-                            SelectedValue="{Binding ChosenAction, Mode=TwoWay}"
-                            />
+                            <TextBlock Text="Check data for correctness?" FontSize="12" HorizontalAlignment="Center"/>
+                            <ToggleButton
+                                Grid.Row="1"
+                                    Style="{StaticResource MaterialDesignSwitchDarkToggleButton}"
+                                    ToolTip="MaterialDesignSwitchDarkToggleButton"
+                                    IsChecked="{Binding IsCorrectnessChecksEnabled}" />       
+
+                        </Grid>
+                       
 
                         <Button Grid.Row="6" 
                                 Style="{DynamicResource MaterialDesignRaisedDarkButton}" 
