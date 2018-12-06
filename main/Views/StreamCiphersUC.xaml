@@ -308,6 +308,7 @@
                                  Text="{Binding GeneratedKey}"
                                  Style="{StaticResource MaterialDesignTextFieldBoxTextBox}" 
                                  Height="120"
+                                 TextWrapping="Wrap"
                                  Width="200"
                                  materialDesign:HintAssist.Hint="Your generated key can go here!" FontSize="11"/>
 

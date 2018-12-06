@@ -8,6 +8,7 @@ using System.Windows.Input;
 using CryptoCore.Data;
 using CiphersLibrary.Data;
 using CiphersLibrary.Core;
+using System.Security.Cryptography;
 
 namespace CryptoCore.Core
 { 
@@ -249,6 +250,7 @@ namespace CryptoCore.Core
             }
 
         }
+        
 
         /// <summary>
         /// Method for fixing a string to proceed to encrypt/decrypt operations(remove unneccessary symbols)

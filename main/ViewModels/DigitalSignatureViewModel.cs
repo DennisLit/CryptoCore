@@ -37,7 +37,7 @@ namespace CryptoCore.Core
 
         public static string[] ActionsList => new string[] { "Sign a message", "Signature check" };
          
-        public static string[] SignatureTypeList => new string[] { "RSA default", "RSA SHA-1"};
+        public static string[] SignatureTypeList => new string[] { "RSA default", "RSA SHA-1", "RSA MD5"};
 
         public string ChosenSignature { get; set; } = "RSA default";
          
@@ -219,7 +219,10 @@ namespace CryptoCore.Core
 
                 if (ChosenAction == "Sign a message")
                 {
-                    OutputText += Environment.NewLine + $"Result Is: {signatureInstance.Sign(FilePath).ToString()}";
+                    var result = signatureInstance.Sign(FilePath);
+                    OutputText += Environment.NewLine + $"Result of signing Is: {result.Item1.ToString()}"
+                        + Environment.NewLine + $"Hash in decimal is :{result.Item2.ToString()}"
+                        + Environment.NewLine + $"Hash in hex is :{result.Item2.ToString("X")}";
                 }                 
                     
                 if(ChosenAction == "Signature check")
@@ -261,6 +264,11 @@ namespace CryptoCore.Core
             { IsNoActionRunning = true; }
 
         }
+
+
+        #endregion
+
+        #region Helper methods
 
         private void ChooseFile(Object ChosenFile)
         {
@@ -305,10 +313,6 @@ namespace CryptoCore.Core
             }
 
         }
-        #endregion
-
-        #region Helper methods
-
 
         private void InitCollections()
         {
@@ -346,7 +350,8 @@ namespace CryptoCore.Core
             HashFunctionsDict = new Dictionary<string, HashFunction>
             {
                 { "RSA default", HashFunction.YarmolikHash },
-                { "RSA SHA-1", HashFunction.Sha1 }
+                { "RSA SHA-1", HashFunction.Sha1 },
+                { "RSA MD5", HashFunction.MD5 }
             };
 
         }
